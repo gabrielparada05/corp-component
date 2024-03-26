@@ -1,12 +1,14 @@
+const MAX_CHARS = 150;
+
 const textareaEl = document.querySelector(".form__textarea");
 const counterEl = document.querySelector(".counter")
 const formEl = document.querySelector('.form');
 const feedbackListEl = document.querySelector('.feedbacks');
-
+const submitBtnEl = document.querySelector('.submit-btn');
 
 const inputHandler = () => {
     //numb of characters
-    const maxCharacters = 150;
+    const maxCharacters = MAX_CHARS;
 
     //number of characters currently typed
     const lengthCharacters = textareaEl.value.length;
@@ -16,15 +18,24 @@ const inputHandler = () => {
     const charactersLeft = maxCharacters - lengthCharacters;
 
     counterEl.innerHTML = charactersLeft
-    console.log(charactersLeft)
+  
 
 }
 
 textareaEl.addEventListener('input', inputHandler)
 
+
+const showVisualIndicator = (textCheck) => {
+    const className = textCheck === 'valid' ? 'form--valid' : 'form--invalid'
+
+    formEl.classList.add(className)
+    setTimeout(() => {
+        formEl.classList.remove(className)
+    }, 2000);
+
+}
+
 /// submit comp 
-
-
 
 const submitHandler = (event) => {
     event.preventDefault();
@@ -35,21 +46,12 @@ const submitHandler = (event) => {
   // validate text (if # is present, text is long enough)
 
     if (text.includes('#') &&  text.length > 4){
-        formEl.classList.add('form--valid')
-        setTimeout(() => {
-            formEl.classList.remove('form--valid')
-        }, 2000);
-
+      showVisualIndicator('valid');
     } else {
-        formEl.classList.add('form--invalid')
-        setTimeout(() => {
-            formEl.classList.remove('form--invalid')
-        }, 2000);
-
-        //stop this function execution
+        showVisualIndicator('invalid');
 
         textareaEl.focus();
-
+        //stop this function execution
         return;
     }
 
@@ -75,7 +77,7 @@ const submitHandler = (event) => {
                 <p class="feedback__company">${company}</p>
                 <p class="feedback__text">hi ${text} i like your clothes but not the website, please improve it</p>
             </div>
-            <p class="feedback__date">${daysAgo}d</p>
+            <p class="feedback__date">${daysAgo === 0 ? "NEW" : `${daysAgo}}d`}</p>
         </li>
         `;  
 
@@ -84,6 +86,17 @@ const submitHandler = (event) => {
               //insert feedback in list
 
         feedbackListEl.insertAdjacentHTML('beforeend', feedbackItemHTML);
+
+        // clear text area
+        textareaEl.value=' ';
+
+        //blur submit btn
+
+        submitBtnEl.blur();
+
+        //reset counter
+        counterEl.textContent = MAX_CHARS;
+
 
 };
 
